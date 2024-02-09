@@ -1,0 +1,34 @@
+{
+  "name": "@gab706/becrypt",
+  "version": "1.0.4",
+  "description": "Encrypt and store data like you've never seen before.",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=21.6.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gab706/BeCrypt.git"
+  },
+  "keywords": [
+    "encrypt",
+    "hash",
+    "decrypt",
+    "secure",
+    "md5",
+    "node",
+    "crypto",
+    "crypt",
+    "encryption",
+    "authentication",
+    "auth",
+    "password",
+    "becrypt"
+  ],
+  "author": "Gabriel Esposito",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gab706/BeCrypt/issues"
+  },
+  "homepage": "https://github.com/gab706/BeCrypt#readme"
+}

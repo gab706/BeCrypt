@@ -1,0 +1,105 @@
+name: Version Control
+
+on:
+  push:
+    branches:
+      - production
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+
+      - name: Set Latest Release
+        id: set_latest_release
+        run: |
+          latest_release=$(
+            curl -s "https://api.github.com/repos/${{ github.repository }}/releases/latest" | \
+            jq -r '.tag_name' | \
+            tr -d 'v'
+          )
+          echo "latest_tag=${latest_release}" >> $GITHUB_ENV
+
+      - name: Get Version from Package.json
+        id: get_version
+        run: |
+          package_version=$(jq -r .version package.json | tr -d '%')
+          echo "package_version=${package_version}" >> $GITHUB_ENV
+
+      - name: Check if Latest Tag Matches Package Version
+        id: version_check
+        run: |
+          version_match="${{ env.package_version == env.latest_tag }}"
+          echo "version_match=${version_match}" >> $GITHUB_ENV
+          if [[ $version_match == 'true' ]]; then
+            echo "Skipping release creation as the latest tag matches the version in package.json."
+            exit 0
+          fi
+
+      - name: Create Release
+        id: create_release
+        if: env.version_match != 'true'
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          tag: v${{ env.package_version }}
+          name: v${{ env.package_version }}
+          generateReleaseNotes: true
+          draft: false
+          makeLatest: true
+          skipIfReleaseExists: true
+          prerelease: false
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4.1.1
+
+      - name: Set Latest Release
+        id: set_latest_release
+        run: |
+          latest_release=$(
+            curl -s "https://api.github.com/repos/${{ github.repository }}/releases/latest" | \
+            jq -r '.tag_name' | \
+            tr -d 'v'
+          )
+          echo "latest_tag=${latest_release}" >> $GITHUB_ENV
+
+      - name: Get Version from Package.json
+        id: get_version
+        run: |
+          package_version=$(jq -r .version package.json | tr -d '%')
+          echo "package_version=${package_version}" >> $GITHUB_ENV
+
+      - name: Check if Latest Tag Matches Package Version
+        id: check_version
+        run: |
+          version_match="${{ env.package_version == env.latest_tag }}"
+          echo "version_match=${version_match}" >> $GITHUB_ENV
+          if [[ $version_match == 'true' ]]; then
+            echo "Skipping NPM deploy as the latest tag matches the version in package.json."
+            exit 0
+          fi
+
+      - name: Set up Node.js
+        if: env.version_match != 'true'
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: '21'
+
+      - name: Install Dependencies
+        if: env.version_match != 'true'
+        run: npm install
+      
+      - name: Authenticate with NPM
+        if: env.version_match != 'true'
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+      
+      - name: Deploy to NPM
+        if: env.version_match != 'true'
+        run: npm publish --access public
