@@ -1,6 +1,6 @@
 {
   "name": "@gab706/becrypt",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Encrypt and store data like you've never seen before.",
   "main": "src/index.js",
   "engines": {
