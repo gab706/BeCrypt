@@ -1,8 +1,6 @@
 'use strict';
-const md5 = require('../hashing/md5');
-const sha256 = require('../hashing/sha256');
-
-
+import md5 from '../hashing/md5.js';
+import sha256 from '../hashing/sha256.js';
 /**
  * Encrypts data using a complex key generated based on the specified hash and salt types.
  *
@@ -18,19 +16,16 @@ const sha256 = require('../hashing/sha256');
  * @throws {Error} Throws an error if the salt type is not recognised (use: 'char', 'sin', 'seed', or null).
  * @throws {Error} Throws an error if the hash type is not recognised (use: 'md5' or 'sha256').
  */
-module.exports = (data, hashType, saltType) => {
+export default (data, hashType, saltType) => {
     const stringData = JSON.stringify(data);
     let encryptedData = '';
-
-    const hashedKey = module.exports.generateRandomKey(hashType, saltType);
-
+    const hashedKey = generateKey(hashType, saltType);
     for (let i = 0; i < stringData.length; i++) {
-        encryptedData += String.fromCharCode(stringData.charCodeAt(i) ^ hashedKey.charCodeAt(i % hashedKey.length));
+        encryptedData += String.fromCharCode(stringData.charCodeAt(i) ^
+            hashedKey.charCodeAt(i % hashedKey.length));
     }
-
     return { hashedKey, encryptedData };
-}
-
+};
 /**
  * Generates a completely random complex key based on the specified hash and salt types.
  *
@@ -42,9 +37,8 @@ module.exports = (data, hashType, saltType) => {
  * @throws {Error} Throws an error if the salt type is not recognized (use: 'char', 'sin', 'seed', or null).
  * @throws {Error} Throws an error if the hash type is not recognized (use: 'md5' or 'sha256').
  */
-module.exports.generateRandomKey = (hashType, saltType) => {
+export function generateKey(hashType, saltType) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:,.<>?';
-
     const generateRandomString = (length) => {
         let randomString = '';
         for (let i = 0; i < length; i++) {
@@ -53,14 +47,10 @@ module.exports.generateRandomKey = (hashType, saltType) => {
         }
         return randomString;
     };
-
     if (saltType !== null && saltType !== undefined && !['sin', 'char', 'seed'].includes(saltType))
         throw new Error('Salt type not recognised. Use: Char, Sin, or Seed');
-
-    let complexKey = generateRandomString(50);
-
+    const complexKey = generateRandomString(50);
     let hashedKey;
-
     switch (hashType) {
         case 'md5':
             hashedKey = md5(complexKey, saltType);
@@ -71,6 +61,5 @@ module.exports.generateRandomKey = (hashType, saltType) => {
         default:
             throw new Error('Hash type not recognised. Use: md5 or sha256');
     }
-
     return hashedKey;
-};
+}

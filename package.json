@@ -1,10 +1,17 @@
 {
   "name": "@gab706/becrypt",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Encrypt and store data like you've never seen before.",
-  "main": "src/index.js",
+  "main": "build/src/index.js",
+  "types": "build/src/index.d.ts",
+  "source": "src/index.ts",
+  "type": "module",
   "engines": {
     "node": ">=21.6.1"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && cd build/src && node index.js"
   },
   "repository": {
     "type": "git",
@@ -30,5 +37,16 @@
   "bugs": {
     "url": "https://github.com/gab706/BeCrypt/issues"
   },
-  "homepage": "https://github.com/gab706/BeCrypt#readme"
+  "homepage": "https://github.com/gab706/BeCrypt#readme",
+  "devDependencies": {
+    "@types/node": "^20.11.25",
+    "typescript": "^5.4.2"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "default": "./build/src/index.js"
+      }
+    }
+  }
 }

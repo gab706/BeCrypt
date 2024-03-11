@@ -1,5 +1,4 @@
 'use strict';
-
 /**
  * Decrypts the encrypted data using the original key.
  *
@@ -12,15 +11,17 @@
  * @param {string} encryptedData - The encrypted data to be decrypted.
  * @returns {any} The decrypted data, parsed as JSON if possible, or the raw decrypted data.
  */
-module.exports = (originalKey, encryptedData) => {
+export default (originalKey, encryptedData) => {
     let decryptedData = '';
-
-    for (let i = 0; i < encryptedData.length; i++)
-        decryptedData += String.fromCharCode(encryptedData.charCodeAt(i) ^ originalKey.charCodeAt(i % originalKey.length));
-
+    for (let i = 0; i < encryptedData.length; i++) {
+        decryptedData += String.fromCharCode(encryptedData.charCodeAt(i) ^
+            originalKey.charCodeAt(i % originalKey.length));
+    }
     try {
         return JSON.parse(decryptedData);
-    } catch (error) {
-        return decryptedData;
+    }
+    catch (error) {
+        console.error('Error parsing decrypted data as JSON:', error.message);
+        return null;
     }
 };

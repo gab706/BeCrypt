@@ -1,5 +1,4 @@
-'use strict';
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 /**
  * Generates a random salt using a non-cryptographic pseudo-random number generator.
@@ -19,24 +18,24 @@ const crypto = require('crypto');
  * @example
  * const salt = seedSalt();
  */
-module.exports = () => {
-    const minLength = crypto.randomInt(10) + 1;
-    const maxLength = crypto.randomInt(10) + 11;
-    const length = crypto.randomInt(maxLength - minLength + 1) + minLength;
+export default (): string => {
+    const minLength: number = crypto.randomInt(10) + 1;
+    const maxLength: number = crypto.randomInt(10) + 11;
+    const length: number = crypto.randomInt(maxLength - minLength + 1) + minLength;
 
-    let seed = Date.now();
-    let salt = "";
+    let seed: number = Date.now();
+    let salt: string = "";
 
     for (let i = 0; i < length; i++) {
         seed ^= (seed << 21);
         seed ^= (seed >>> 3);
         seed ^= (seed << 4);
-        const randomByte = (seed & 0xff) / 255;
+        const randomByte: number = (seed & 0xff) / 255;
 
-        const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        const randomIndex = Math.floor(randomByte * charset.length);
+        const charset: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        const randomIndex: number = Math.floor(randomByte * charset.length);
         salt += charset.charAt(randomIndex);
     }
 
     return salt;
-};
+}
