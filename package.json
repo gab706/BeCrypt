@@ -1,6 +1,6 @@
 {
   "name": "@gab706/becrypt",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Encrypt and store data like you've never seen before.",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",

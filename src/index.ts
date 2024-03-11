@@ -9,7 +9,7 @@ import charSalt from './security/salting/charSalt.js';
 import sinSalt from './security/salting/sinSalt.js';
 import seedSalt from './security/salting/seedSalt.js';
 
-export {
+export default {
     encrypt,
     decrypt,
     md5,
